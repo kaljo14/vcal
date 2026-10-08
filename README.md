@@ -88,7 +88,7 @@ Clerk’s official testing helper establishes real Clerk sessions; requests, pol
 
 ## Docker Hub releases
 
-GitHub Actions publishes `kaljo14/vcal-api` and `kaljo14/vcal-web` for tags such as `v1.2.3`, using the image tag `1.2.3`. Configure repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, plus repository variable `VITE_CLERK_PUBLISHABLE_KEY` for the web build. The Docker Hub account must be able to push both repositories.
+Every push to `main` automatically creates the next patch release tag and publishes `kaljo14/vcal-api` and `kaljo14/vcal-web` with that version. The first release is `0.1.0`; later pushes increment the patch (for example, `0.1.1`). Pushing a valid `vMAJOR.MINOR.PATCH` tag manually also publishes that version. Configure repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, plus repository variable `VITE_CLERK_PUBLISHABLE_KEY` for the web build. The Docker Hub account must be able to push both repositories.
 
 ## Accounting and operational decisions
 
