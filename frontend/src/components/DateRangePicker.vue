@@ -1,0 +1,2 @@
+<script setup lang="ts">defineProps<{start:string;end:string;minimum?:string}>();defineEmits<{'update:start':[string];'update:end':[string]}>()</script>
+<template><div class="form-grid"><label>Start date<input type="date" :value="start" :min="minimum" required @input="$emit('update:start',($event.target as HTMLInputElement).value)"></label><label>End date<input type="date" :value="end" :min="start||minimum" required @input="$emit('update:end',($event.target as HTMLInputElement).value)"></label></div></template>

@@ -1,0 +1,16 @@
+# Docker Compose >= 2.24.4. Preserve the existing postgres_data volume during migration.
+services:
+  postgres:
+    ports: !reset []
+  seed:
+    command: ["python", "-c", "print('Development seeding disabled')"]
+  api:
+    ports: !reset []
+    environment: &production_api
+      ENVIRONMENT: production
+      CLERK_ISSUER: ${CLERK_ISSUER:?Set your production Clerk Frontend API URL}
+      CLERK_AUDIENCE: ${CLERK_AUDIENCE:-}
+      CLERK_AUTHORIZED_PARTIES: ${CLERK_AUTHORIZED_PARTIES:?Set explicit HTTPS application origins}
+      CORS_ORIGINS: ${CORS_ORIGINS:?Set explicit HTTPS application origins}
+  worker:
+    environment: *production_api

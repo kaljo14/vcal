@@ -1,0 +1,93 @@
+name: workleave
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: workleave
+      POSTGRES_USER: workleave_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env first}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set APP_DB_PASSWORD}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/docker/init-db.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workleave_owner -d workleave"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    build: {context: ., dockerfile: infra/docker/backend.Dockerfile}
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://workleave_owner:${POSTGRES_PASSWORD}@postgres:5432/workleave
+    depends_on:
+      postgres: {condition: service_healthy}
+  seed:
+    build: {context: ., dockerfile: infra/docker/backend.Dockerfile}
+    command: ["python", "-m", "app.seed"]
+    environment:
+      CLERK_SEED_EMPLOYEE_ID: ${CLERK_SEED_EMPLOYEE_ID:-}
+      CLERK_SEED_MANAGER_ID: ${CLERK_SEED_MANAGER_ID:-}
+      CLERK_SEED_HR_ID: ${CLERK_SEED_HR_ID:-}
+      CLERK_SEED_ADMIN_ID: ${CLERK_SEED_ADMIN_ID:-}
+      CLERK_SEED_COLLEAGUE_ID: ${CLERK_SEED_COLLEAGUE_ID:-}
+      DATABASE_URL: postgresql+psycopg://workleave_owner:${POSTGRES_PASSWORD}@postgres:5432/workleave
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  grants:
+    image: postgres:17-alpine
+    command: ["sh", "/grants.sh"]
+    environment:
+      PGPASSWORD: "${POSTGRES_PASSWORD}"
+      APP_DB_PASSWORD: "${APP_DB_PASSWORD:?Set APP_DB_PASSWORD}"
+    volumes:
+      - ./infra/docker/grants.sql:/grants.sql:ro
+      - ./infra/docker/grants.sh:/grants.sh:ro
+    depends_on:
+      seed: {condition: service_completed_successfully}
+  api:
+    build: {context: ., dockerfile: infra/docker/backend.Dockerfile}
+    environment: &api_environment
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql+psycopg://workleave_app:${APP_DB_PASSWORD}@postgres:5432/workleave
+      CLERK_ISSUER: ${CLERK_ISSUER:?Set your Clerk Frontend API URL}
+      CLERK_AUDIENCE: ${CLERK_AUDIENCE:-}
+      CLERK_AUTHORIZED_PARTIES: ${CLERK_AUTHORIZED_PARTIES:-["http://localhost:3000","http://localhost:5173"]}
+      CORS_ORIGINS: '["http://localhost:3000","http://localhost:5173"]'
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
+      SMTP_FROM: ${SMTP_FROM:-workleave@localhost}
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      grants: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  worker:
+    build: {context: ., dockerfile: infra/docker/backend.Dockerfile}
+    command: ["python", "-m", "app.services.worker"]
+    environment: *api_environment
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+  web:
+    environment: {CLERK_FRONTEND_API: "${CLERK_ISSUER}"}
+    build:
+      context: .
+      dockerfile: infra/docker/frontend.Dockerfile
+      args:
+        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY:?Set your Clerk publishable key}
+    ports: ["127.0.0.1:3000:8080"]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+volumes:
+  postgres_data:

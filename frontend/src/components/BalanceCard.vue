@@ -1,0 +1,2 @@
+<script setup lang="ts">import { ArrowUpRight } from 'lucide-vue-next';defineProps<{label:string;value:string|number;unit?:string;caption:string;accent?:boolean}>()</script>
+<template><article class="balance-card" :class="{accent}"><div class="flex-between"><span>{{label}}</span><ArrowUpRight :size="17"/></div><div class="balance-number">{{value}}<span>{{unit||'days'}}</span></div><p>{{caption}}</p><slot/></article></template>

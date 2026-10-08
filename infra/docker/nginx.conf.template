@@ -1,0 +1,24 @@
+map $uri $workleave_cache_control {
+    default "no-cache";
+    ~^/assets/ "public, max-age=31536000, immutable";
+    ~^/api/ "no-store";
+}
+server {
+    listen 8080;
+    server_name _;
+    server_tokens off;
+    root /usr/share/nginx/html;
+    index index.html;
+    client_max_body_size 1m;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options DENY always;
+    add_header Referrer-Policy no-referrer always;
+    add_header Permissions-Policy 'camera=(), microphone=(), geolocation=()' always;
+    add_header Cache-Control $workleave_cache_control always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${CLERK_FRONTEND_API} https://challenges.cloudflare.com https://*.protect.clerk.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://img.clerk.com; connect-src 'self' ${CLERK_FRONTEND_API} https://clerk-telemetry.com https://*.clerk-telemetry.com https://*.protect.clerk.com; frame-src 'self' ${CLERK_FRONTEND_API} https://challenges.cloudflare.com https://*.protect.clerk.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" always;
+    location /api/ { proxy_pass http://api:8000; proxy_set_header Host $host; }
+    location = /health { proxy_pass http://api:8000/health; }
+    location = /ready { proxy_pass http://api:8000/ready; }
+    location /assets/ { try_files $uri =404; }
+    location / { try_files $uri $uri/ /index.html; }
+}

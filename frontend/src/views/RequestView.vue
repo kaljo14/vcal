@@ -1,0 +1,2 @@
+<script setup lang="ts">import { useRoute } from 'vue-router';import { computed } from 'vue';import RequestForm from '../components/RequestForm.vue';const route=useRoute();const kind=computed(()=>route.params.kind==='mobile'?'MOBILE':'LEAVE')</script>
+<template><div class="page-heading"><div><div class="eyebrow">MAKE SPACE FOR YOU</div><h1>{{kind==='LEAVE'?'Request vacation':'Request mobile work'}}</h1><p>Plan ahead. Keep your team in the loop.</p></div></div><RequestForm :key="kind" :kind="kind"/></template>

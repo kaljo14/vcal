@@ -1,0 +1,8 @@
+export interface Employee { id: number; first_name: string; last_name: string; email: string; employee_number: string; roles: string[]; team_id: number; department_id: number; manager_id: number|null; team: string; department: string; timezone: string; status: string; email_notifications: boolean; [key: string]: unknown }
+export interface Balance { leave_type_id: number; name: string; year: number; available: number|string; used: number|string; pending: number|string; granted: number|string; projected: number|string }
+export interface WorkRequest { id: number; employee_id: number; employee_name: string; kind: 'LEAVE'|'MOBILE'; start_date: string; end_date: string; status: string; label: string; days: number|string; portion: string; comment?: string; location_type?: string; city?: string; country?: string; exception_flags: string[]; can_approve: boolean; requires_justification: boolean; decisions?: {decision: string; comment: string; decided_at: string}[] }
+export interface CalendarEvent { id: string; title: string; start: string; end: string; kind: string; status: string; employee_id?: number; fraction?: number; portion?: string }
+export interface CalendarData { events: CalendarEvent[]; statistics: Record<string, {office:number; remote:number; leave:number; pending:number}>; employees: {id:number;name:string}[] }
+export interface Dashboard { balances: Balance[]; mobile: {used:number;remaining:number;limit:number}; recent: WorkRequest[]; upcoming: WorkRequest[]; pending_count: number; today: CalendarData }
+export interface Notification { id:number;message:string;type:string;read_at:string|null;created_at:string }
+export interface Lookup {id:number;name:string;[key:string]:unknown}

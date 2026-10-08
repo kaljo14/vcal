@@ -1,0 +1,13 @@
+{
+  "name": "workleave-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "typescript": "5.9.3",
+    "@clerk/testing": "2.1.3"
+  }
+}

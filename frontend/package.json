@@ -1,0 +1,59 @@
+{
+  "name": "workleave-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc --noEmit && vite build && node scripts/build-sw.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run",
+    "lint": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@clerk/vue": "2.0.7",
+    "@fullcalendar/core": "https://registry.npmjs.org/@fullcalendar/core/-/core-6.1.11.tgz",
+    "@fullcalendar/daygrid": "https://registry.npmjs.org/@fullcalendar/daygrid/-/daygrid-6.1.11.tgz",
+    "@fullcalendar/interaction": "https://registry.npmjs.org/@fullcalendar/interaction/-/interaction-6.1.11.tgz",
+    "@fullcalendar/timegrid": "https://registry.npmjs.org/@fullcalendar/timegrid/-/timegrid-6.1.11.tgz",
+    "@headlessui/vue": "https://registry.npmjs.org/@headlessui/vue/-/vue-1.7.16.tgz",
+    "@tanstack/query-core": "5.90.16",
+    "lucide-vue-next": "https://registry.npmjs.org/lucide-vue-next/-/lucide-vue-next-1.0.0.tgz",
+    "pinia": "3.0.4",
+    "vue": "3.5.32",
+    "vue-router": "4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@vitejs/plugin-vue": "6.0.5",
+    "@vue/test-utils": "2.4.6",
+    "autoprefixer": "10.4.16",
+    "jsdom": "26.1.0",
+    "postcss": "8.4.33",
+    "tailwindcss": "3.4.1",
+    "typescript": "5.9.3",
+    "vite": "7.3.1",
+    "vitest": "3.2.4",
+    "vue-tsc": "3.2.6"
+  },
+  "overrides": {
+    "preact": "https://registry.npmjs.org/preact/-/preact-10.12.1.tgz",
+    "didyoumean": "https://registry.npmjs.org/didyoumean/-/didyoumean-1.2.2.tgz",
+    "dlv": "https://registry.npmjs.org/dlv/-/dlv-1.1.3.tgz",
+    "postcss-import": "https://registry.npmjs.org/postcss-import/-/postcss-import-15.1.0.tgz",
+    "postcss-js": "https://registry.npmjs.org/postcss-js/-/postcss-js-4.0.1.tgz",
+    "postcss-load-config": "https://registry.npmjs.org/postcss-load-config/-/postcss-load-config-4.0.2.tgz",
+    "postcss-nested": "https://registry.npmjs.org/postcss-nested/-/postcss-nested-6.0.1.tgz",
+    "sucrase": "https://registry.npmjs.org/sucrase/-/sucrase-3.35.0.tgz",
+    "read-cache": "https://registry.npmjs.org/read-cache/-/read-cache-1.0.0.tgz",
+    "camelcase-css": "https://registry.npmjs.org/camelcase-css/-/camelcase-css-2.0.1.tgz",
+    "pify": "https://registry.npmjs.org/pify/-/pify-5.0.0.tgz",
+    "mz": "https://registry.npmjs.org/mz/-/mz-2.7.0.tgz",
+    "pirates": "https://registry.npmjs.org/pirates/-/pirates-4.0.6.tgz",
+    "ts-interface-checker": "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz",
+    "any-promise": "https://registry.npmjs.org/any-promise/-/any-promise-1.3.0.tgz",
+    "thenify-all": "https://registry.npmjs.org/thenify-all/-/thenify-all-1.6.0.tgz",
+    "thenify": "https://registry.npmjs.org/thenify/-/thenify-3.3.1.tgz",
+    "brace-expansion": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.5.tgz"
+  }
+}
