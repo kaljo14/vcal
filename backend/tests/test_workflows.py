@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from decimal import Decimal
 from sqlalchemy import select
-from app.models.entities import Holiday, Ledger, LeavePolicy, MobilePolicy, Request, User, WorkSchedule, RoleAssignment
+from app.models.entities import Department, Holiday, Ledger, LeavePolicy, MobilePolicy, Request, Team, User, WorkSchedule, RoleAssignment
 from app.policies.calculation import working_days
 from app.services import balances, requests
 from app.schemas.contracts import Decision, RequestInput, Entitlement
@@ -158,6 +158,31 @@ def test_remove_and_restore_employee_preserves_history(client,db):
     assert len(list(db.scalars(select(Ledger).where(Ledger.employee_id==5))))==ledger_count
     assert client.patch('/api/v1/employees/5',json={'status':'ACTIVE'}).json()['status']=='ACTIVE'
     assert any(e['id']==5 for e in client.get('/api/v1/employees',params={'status':'ACTIVE'}).json()['items'])
+
+
+def test_manager_choices_include_only_active_managers(client,db):
+    managers=client.get('/api/v1/managers').json()
+    assert {manager['id'] for manager in managers}=={1}
+    assert managers[0]['first_name']==db.get(User,1).first_name
+    db.get(User,1).status='INACTIVE'
+    db.commit()
+    assert client.get('/api/v1/managers').json()==[]
+
+
+def test_admin_can_delete_only_unused_departments(client,db):
+    sign_in(db,2)
+    assert client.delete('/api/v1/departments/1').status_code==403
+    sign_in(db,4)
+    assert client.delete('/api/v1/departments/1').status_code==409
+    response=client.post('/api/v1/departments',json={'name':'Temporary','description':''})
+    assert response.status_code==201,response.text
+    department_id=response.json()['id']
+    response=client.post('/api/v1/teams',json={'name':'Temporary team','department_id':department_id})
+    assert response.status_code==201,response.text
+    team_id=response.json()['id']
+    assert client.delete(f'/api/v1/departments/{department_id}').status_code==204
+    assert db.get(Department,department_id) is None
+    assert db.get(Team,team_id) is None
 
 def test_reject_cancellation_keeps_usage(client,db):
     rid=client.post('/api/v1/requests',json=payload()).json()['id'];sign_in(db,1)

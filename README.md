@@ -86,6 +86,10 @@ npm test
 
 Clerk’s official testing helper establishes real Clerk sessions; requests, policies, approvals, accounting and calendars use the actual API and database. No application API responses are mocked. Browser tests reject production Clerk keys. In GitHub Actions, configure the corresponding variables and `CLERK_TEST_SECRET_KEY` secret, then set `CLERK_E2E_ENABLED=true`. The hosted-auth E2E job is explicitly skipped until configured; other tests/builds still run.
 
+## Docker Hub releases
+
+GitHub Actions publishes `kaljo14/vcal-api` and `kaljo14/vcal-web` for tags such as `v1.2.3`, using the image tag `1.2.3`. Configure repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, plus repository variable `VITE_CLERK_PUBLISHABLE_KEY` for the web build. The Docker Hub account must be able to push both repositories.
+
 ## Accounting and operational decisions
 
 - Vacation is charged on approval, separately by year. Pending leave is displayed separately. Credit lots expire and are consumed in expiry order. Cancellation restores original credits without extending expiry.
