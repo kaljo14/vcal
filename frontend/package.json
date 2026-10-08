@@ -11,7 +11,7 @@
     "lint": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@clerk/vue": "2.0.7",
+    "@clerk/vue": "2.5.11",
     "@fullcalendar/core": "https://registry.npmjs.org/@fullcalendar/core/-/core-6.1.11.tgz",
     "@fullcalendar/daygrid": "https://registry.npmjs.org/@fullcalendar/daygrid/-/daygrid-6.1.11.tgz",
     "@fullcalendar/interaction": "https://registry.npmjs.org/@fullcalendar/interaction/-/interaction-6.1.11.tgz",
@@ -20,7 +20,7 @@
     "@tanstack/query-core": "5.90.16",
     "lucide-vue-next": "https://registry.npmjs.org/lucide-vue-next/-/lucide-vue-next-1.0.0.tgz",
     "pinia": "3.0.4",
-    "vue": "3.5.32",
+    "vue": "3.5.43",
     "vue-router": "4.6.4"
   },
   "devDependencies": {
